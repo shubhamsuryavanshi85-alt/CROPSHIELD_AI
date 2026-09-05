@@ -57,7 +57,7 @@ export default function Home({ onNavigate }) {
       title: t('how_it_works.step1_title', '1. Photograph Symptoms'),
       desc: t('how_it_works.step1_desc', 'Capture affected leaves, stems, or fruit directly in the field with camera or offline cache.'),
       icon: Camera,
-      image: 'https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?auto=format&fit=crop&w=600&q=80',
+      image: '/field-capture.jpg',
       tag: 'Field Capture',
     },
     {
@@ -66,7 +66,7 @@ export default function Home({ onNavigate }) {
       title: t('how_it_works.step2_title', '2. AI Pathology & Weather Risk'),
       desc: t('how_it_works.step2_desc', 'Vision models identify pathogen signatures while live meteorology computes 7-day spore risk.'),
       icon: CloudSun,
-      image: 'https://images.unsplash.com/photo-1596363505729-4190a9506133?auto=format&fit=crop&w=600&q=80',
+      image: '/ai-pathology-analysis.jpg',
       tag: 'Pathogen Analysis',
     },
     {
@@ -75,7 +75,7 @@ export default function Home({ onNavigate }) {
       title: t('how_it_works.step3_title', '3. Act on Tailored Advisory'),
       desc: t('how_it_works.step3_desc', 'Receive safe chemical dosages, Pre-Harvest Intervals (PHI), organic cures, and KVK lab escalation.'),
       icon: ClipboardCheck,
-      image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=crop&w=600&q=80',
+      image: '/tailored-advisory.jpg',
       tag: 'CIBRC Protocol',
     },
   ];

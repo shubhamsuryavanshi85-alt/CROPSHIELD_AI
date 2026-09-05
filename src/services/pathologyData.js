@@ -27,7 +27,7 @@ export const SAMPLE_SPECIMENS = [
     cropId: 'tomato',
     growthStage: 'fruiting',
     title: 'Tomato Late Blight (Phytophthora)',
-    thumbnail: 'https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?auto=format&fit=crop&w=400&q=80',
+    thumbnail: '/tomato-late-blight.jpg',
     symptoms: 'Large brown/black water-soaked lesions on lower leaves, white fungal fuzz on leaf undersides, fruit showing dark greasy rot.',
     diagnosis: {
       diagnosis: 'Late Blight',
@@ -79,7 +79,7 @@ export const SAMPLE_SPECIMENS = [
     cropId: 'onion',
     growthStage: 'fruiting',
     title: 'Onion Purple Blotch (Alternaria porri)',
-    thumbnail: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=crop&w=400&q=80',
+    thumbnail: '/onion-purple-blotch.jpg',
     symptoms: 'Small water-soaked sunken lesions on leaves with distinctive purple-to-brown concentric rings and yellow halos.',
     diagnosis: {
       diagnosis: 'Purple Blotch',
@@ -123,7 +123,7 @@ export const SAMPLE_SPECIMENS = [
     cropId: 'grape',
     growthStage: 'flowering',
     title: 'Grape Downy Mildew (Plasmopara)',
-    thumbnail: 'https://images.unsplash.com/photo-1596363505729-4190a9506133?auto=format&fit=crop&w=400&q=80',
+    thumbnail: '/grape-downy-mildew.jpg',
     symptoms: 'Yellowish oily spots on upper leaf surface (oilspots), dense white downy felt on leaf undersides, flower clusters drying up.',
     diagnosis: {
       diagnosis: 'Downy Mildew',
@@ -167,7 +167,7 @@ export const SAMPLE_SPECIMENS = [
     cropId: 'chili',
     growthStage: 'vegetative',
     title: 'Chili Leaf Curl / Thrips Infestation',
-    thumbnail: 'https://images.unsplash.com/photo-1588879462719-75618f08149a?auto=format&fit=crop&w=400&q=80',
+    thumbnail: '/chilli-thrips-mites.jpg',
     symptoms: 'Upward curling of leaf margins (boat shaped), bronzing underneath leaves, stunted growing tips, flower drop.',
     diagnosis: {
       diagnosis: 'Chili Thrips & Murda Complex',
@@ -211,7 +211,7 @@ export const SAMPLE_SPECIMENS = [
     cropId: 'cotton',
     growthStage: 'fruiting',
     title: 'Cotton Pink Bollworm & Leaf Spot',
-    thumbnail: 'https://images.unsplash.com/photo-1606041008023-472dfb5e530f?auto=format&fit=crop&w=400&q=80',
+    thumbnail: '/cotton-bollworm.jpg',
     symptoms: 'Rosetted flowers that fail to open, entry pinholes on green bolls sealed with excreta, stained unopen lint.',
     diagnosis: {
       diagnosis: 'Pink Bollworm & Cercospora Spot',
@@ -255,7 +255,7 @@ export const SAMPLE_SPECIMENS = [
     cropId: 'maize',
     growthStage: 'vegetative',
     title: 'Healthy Maize Plant — Baseline',
-    thumbnail: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=400&q=80',
+    thumbnail: '/maize-healthy.jpg',
     symptoms: 'Vibrant green upright foliage, strong central whorl, no visible chlorosis or lesions.',
     diagnosis: {
       diagnosis: 'Healthy Crop Foliage (No Active Pathogen)',
