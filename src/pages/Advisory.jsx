@@ -3,25 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { STATIC_ADVISORIES } from '../services/geoService';
 import AdvisoryCard from '../components/advisory/AdvisoryCard';
 import AITranslatorModal from '../components/advisory/AITranslatorModal';
-import { BookOpen, Search, Filter, Sparkles, SlidersHorizontal, ShieldCheck } from 'lucide-react';
+import { BookOpen, Search, Building2, ArrowRight } from 'lucide-react';
 
-export default function Advisory() {
+export default function Advisory({ onNavigate }) {
   const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCrop, setSelectedCrop] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
-  const [sortBy, setSortBy] = useState('weather'); // 'weather' | 'recent' | 'name'
+  const [sortBy, setSortBy] = useState('weather');
   const [customizingAdvisory, setCustomizingAdvisory] = useState(null);
 
   // Filter and sort logic
   const filteredAdvisories = STATIC_ADVISORIES.filter((adv) => {
-    // Crop filter
     if (selectedCrop !== 'all' && adv.cropId !== selectedCrop) return false;
-
-    // Treatment type filter
     if (selectedType !== 'all' && adv.treatmentType !== selectedType) return false;
-
-    // Search term
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
       const matchCrop = adv.crop.toLowerCase().includes(q);
@@ -32,7 +27,6 @@ export default function Advisory() {
         adv.languages.en.treatment_advanced.some((tr) => tr.toLowerCase().includes(q));
       if (!matchCrop && !matchThreat && !matchCautions && !matchChemical) return false;
     }
-
     return true;
   });
 
@@ -72,7 +66,6 @@ export default function Advisory() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          {/* Filter Crop */}
           <div>
             <label className="text-[10px] font-bold uppercase tracking-wider text-soil-dark/60 block mb-1">
               Filter Crop
@@ -90,7 +83,6 @@ export default function Advisory() {
             </select>
           </div>
 
-          {/* Filter Treatment Type */}
           <div>
             <label className="text-[10px] font-bold uppercase tracking-wider text-soil-dark/60 block mb-1">
               Treatment Category
@@ -107,7 +99,6 @@ export default function Advisory() {
             </select>
           </div>
 
-          {/* Sort Criteria */}
           <div>
             <label className="text-[10px] font-bold uppercase tracking-wider text-soil-dark/60 block mb-1">
               Sort Order
@@ -132,9 +123,6 @@ export default function Advisory() {
             <p className="text-sm font-semibold text-soil-dark">
               No IPDM advisory records matched your query "{searchTerm}".
             </p>
-            <p className="text-xs text-soil-dark/60 mt-1">
-              Try clearing filters or search by a broader crop name.
-            </p>
           </div>
         ) : (
           filteredAdvisories.map((adv) => (
@@ -146,6 +134,27 @@ export default function Advisory() {
             />
           ))
         )}
+      </div>
+
+      {/* Farmer Support Link Banner */}
+      <div className="p-5 bg-parchment/60 rounded-2xl border border-soil-dark/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 font-bold text-xs text-soil-dark">
+            <Building2 className="w-4 h-4 text-field-green" />
+            <span>Severe Crop Loss Assistance</span>
+          </div>
+          <p className="text-xs text-soil-dark/70">
+            If chemical/organic advisories cannot recover crop loss, check PMFBY insurance claims and state relief channels.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => onNavigate && onNavigate('support')}
+          className="px-4 py-2.5 bg-field-green hover:bg-field-dark text-white rounded-xl font-bold text-xs shadow-sm transition-colors flex items-center gap-1.5 shrink-0"
+        >
+          <span>Check Government Assistance</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* AI Vernacular Customizer Modal */}

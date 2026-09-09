@@ -5,6 +5,16 @@ import { useFarmStore } from '../../store/farmStore';
 import { showToast } from '../../hooks/useToast';
 import { UserCheck, Clock, MapPin, Phone, Car, ShieldAlert, Send } from 'lucide-react';
 
+const formatStr = (val, fallback = '') => {
+  if (val === null || val === undefined) return fallback;
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number') return String(val);
+  if (typeof val === 'object') {
+    return val.label || val.name || val.disease || val.title || val.diagnosis || fallback;
+  }
+  return fallback;
+};
+
 export default function ExtensionDispatchModal({ isOpen, onClose, alert }) {
   const { workers, dispatchExtensionWorker } = useFarmStore();
   const [selectedWorkerId, setSelectedWorkerId] = useState(workers[0]?.id || '');
@@ -31,7 +41,7 @@ export default function ExtensionDispatchModal({ isOpen, onClose, alert }) {
 
     showToast(
       'Extension Worker Dispatched',
-      `${activeWorker.name} has been assigned to ${alert.disease} in ${alert.district}. Est. travel time: ${estMinutes} mins.`,
+      `${activeWorker?.name || 'Officer'} has been assigned to ${formatStr(alert.disease)} in ${formatStr(alert.district)}. Est. travel time: ${estMinutes} mins.`,
       'success',
       6000
     );
@@ -45,7 +55,7 @@ export default function ExtensionDispatchModal({ isOpen, onClose, alert }) {
       isOpen={isOpen}
       onClose={onClose}
       title="Dispatch Extension Specialist"
-      subtitle={`Assign field officer to contain ${alert.disease} (${alert.district})`}
+      subtitle={`Assign field officer to contain ${formatStr(alert.disease)} (${formatStr(alert.district)})`}
       maxWidth="max-w-xl"
     >
       <form onSubmit={handleConfirmDispatch} className="space-y-5">
@@ -54,12 +64,12 @@ export default function ExtensionDispatchModal({ isOpen, onClose, alert }) {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-soil-dark flex items-center gap-1.5">
               <ShieldAlert className="w-4 h-4 text-danger-red" />
-              {alert.disease} — {alert.crop}
+              {formatStr(alert.disease)} — {formatStr(alert.crop)}
             </span>
-            <Badge variant="critical">{alert.severity.toUpperCase()}</Badge>
+            <Badge variant="critical">{formatStr(alert.severity, 'CRITICAL').toUpperCase()}</Badge>
           </div>
           <p className="text-xs text-soil-dark/80">
-            {alert.locationName} • {alert.farmsCount} Farms in cluster ({alert.confirmedFarms} Confirmed)
+            {formatStr(alert.locationName)} • {alert.farmsCount} Farms in cluster ({alert.confirmedFarms} Confirmed)
           </p>
         </div>
 

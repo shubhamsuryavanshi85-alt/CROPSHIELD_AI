@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 export default function Diagnose() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { analyze, analyzing, result, error, resetDiagnosis } = useImageAnalysis();
   const { coords, districts, selectDistrict, requestAutoLocation, loading: geoLoading } = useGeolocation();
 
@@ -68,6 +68,7 @@ export default function Diagnose() {
       location: coords.districtName,
       recentRain,
       sampleData: activeSample,
+      language: i18n.language,
     });
   };
 
@@ -123,6 +124,20 @@ export default function Diagnose() {
                     alt="Specimen preview"
                     className="w-full h-full object-cover"
                   />
+                  {/* Visual Explainability Overlay */}
+                  {result && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      {/* Simulated Bounding Box for Detected Symptoms */}
+                      <div className="absolute top-[20%] left-[25%] w-[50%] h-[60%] border-2 border-dashed border-danger-red/80 bg-danger-red/10 animate-pulse rounded-lg flex items-start justify-end p-1">
+                        <span className="bg-danger-red text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                          {result.confidence}% Match
+                        </span>
+                      </div>
+                      {/* Grad-CAM style subtle overlay */}
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-danger-red/20 via-transparent to-transparent opacity-60 mix-blend-multiply"></div>
+                    </div>
+                  )}
+
                   <div className="absolute inset-0 bg-soil-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                     <button
                       type="button"

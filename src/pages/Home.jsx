@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import StatCounter from '../components/ui/StatCounter';
+import KrishiMitraCard from '../components/krishimitra/KrishiMitraCard';
+import KrishiMitraModal from '../components/krishimitra/KrishiMitraModal';
 import {
   ShieldAlert,
   MapPin,
@@ -12,10 +14,12 @@ import {
   Sparkles,
   Zap,
   CheckCircle,
+  Bot,
 } from 'lucide-react';
 
 export default function Home({ onNavigate }) {
   const { t } = useTranslation();
+  const [showKrishiMitra, setShowKrishiMitra] = useState(false);
 
   const roleCards = [
     {
@@ -142,6 +146,34 @@ export default function Home({ onNavigate }) {
             </button>
           ))}
         </div>
+      </section>
+
+      {/* KRISHIMITRA FARMER AI ASSISTANT BANNER */}
+      <KrishiMitraCard onOpenChat={() => setShowKrishiMitra(true)} />
+
+      {/* CROP DAMAGED? GOVERNMENT ASSISTANCE QUICK ACTION */}
+      <section className="paper-card rounded-2xl p-5 border border-danger-red/30 shadow-md bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-danger-red/10 border border-danger-red/30 flex items-center justify-center shrink-0">
+            <span className="text-xl">🚨</span>
+          </div>
+          <div>
+            <h3 className="font-display font-bold text-base text-soil-dark flex items-center gap-2">
+              <span>Crop Damaged by Weather, Pest, or Flood?</span>
+            </h3>
+            <p className="text-xs text-soil-dark/70 mt-0.5">
+              Check potential PMFBY crop insurance eligibility, MP RBC 6-4 disaster relief, and official government assistance options.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => onNavigate('support')}
+          className="px-5 py-2.5 bg-danger-red hover:bg-danger-dark text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+        >
+          <span>Check Assistance Now</span>
+          <ArrowRight className="w-4 h-4 text-harvest-gold" />
+        </button>
       </section>
 
       {/* 2. PROBLEM STRIP WITH ANIMATED SCROLL COUNTERS */}
@@ -322,6 +354,26 @@ export default function Home({ onNavigate }) {
           </div>
         </div>
       </section>
+
+      {/* KRISHIMITRA FLOATING QUICK LAUNCHER BUTTON */}
+      <button
+        onClick={() => setShowKrishiMitra(true)}
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-30 px-4 py-3 bg-field-green hover:bg-growth text-white rounded-full shadow-2xl border-2 border-harvest-gold flex items-center gap-2 font-bold text-xs transition-all hover:scale-105 active:scale-95 group"
+        aria-label="Open KrishiMitra Assistant"
+      >
+        <div className="w-7 h-7 rounded-full bg-soil-dark text-harvest-gold flex items-center justify-center font-bold">
+          🌾
+        </div>
+        <span className="hidden sm:inline">Ask KrishiMitra</span>
+        <span className="sm:hidden font-mono-data text-[11px]">KrishiMitra</span>
+      </button>
+
+      {/* KRISHIMITRA CONVERSATIONAL ASSISTANT MODAL */}
+      <KrishiMitraModal
+        isOpen={showKrishiMitra}
+        onClose={() => setShowKrishiMitra(false)}
+        onNavigate={onNavigate}
+      />
     </div>
   );
 }

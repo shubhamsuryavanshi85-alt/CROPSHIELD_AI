@@ -2,6 +2,16 @@ import React from 'react';
 import Badge from '../ui/Badge';
 import { ShieldAlert, Send, Eye, CheckCircle2, Filter, Layers } from 'lucide-react';
 
+const formatStr = (val, fallback = '') => {
+  if (val === null || val === undefined) return fallback;
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number') return String(val);
+  if (typeof val === 'object') {
+    return val.label || val.name || val.disease || val.title || val.diagnosis || fallback;
+  }
+  return fallback;
+};
+
 export default function ActiveAlertsSidebar({
   alerts = [],
   selectedAlert,
@@ -14,7 +24,9 @@ export default function ActiveAlertsSidebar({
   showHeatmap,
   setShowHeatmap,
 }) {
-  const filteredAlerts = alerts.filter((a) => {
+  const safeAlerts = Array.isArray(alerts) ? alerts : [];
+  const filteredAlerts = safeAlerts.filter((a) => {
+    if (!a) return false;
     if (filterStatus !== 'all' && a.status !== filterStatus) return false;
     if (filterCrop !== 'all' && a.crop !== filterCrop) return false;
     return true;
@@ -99,19 +111,19 @@ export default function ActiveAlertsSidebar({
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div>
                     <span className="text-[10px] font-bold text-soil-dark/60 uppercase">
-                      {alert.district} • {alert.crop}
+                      {formatStr(alert.district)} • {formatStr(alert.crop)}
                     </span>
                     <h4 className="font-bold text-xs sm:text-sm text-soil-dark leading-tight">
-                      {alert.disease}
+                      {formatStr(alert.disease)}
                     </h4>
                   </div>
                   <Badge variant={isCritical ? 'critical' : 'warning'}>
-                    {alert.severity.toUpperCase()}
+                    {formatStr(alert.severity, 'warning').toUpperCase()}
                   </Badge>
                 </div>
 
                 <p className="text-[11px] text-soil-dark/75 line-clamp-2 mt-1">
-                  {alert.description}
+                  {formatStr(alert.description)}
                 </p>
 
                 <div className="flex items-center justify-between text-[10px] text-soil-dark/60 font-mono-data mt-2 pt-2 border-t border-soil-dark/5">

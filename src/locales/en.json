@@ -40,11 +40,12 @@
   },
   "nav": {
     "home": "Home",
-    "diagnose": "Diagnose Crop",
-    "forecast": "Risk Forecast",
+    "diagnose": "Diagnose",
+    "forecast": "Forecast",
     "map": "Disease Map",
     "advisory": "Advisories",
-    "dashboard": "Official Dashboard",
+    "support": "Farmer Support",
+    "dashboard": "Dashboard",
     "settings": "Settings"
   },
   "diagnose": {
@@ -144,5 +145,12 @@
     "cancel": "Cancel",
     "success": "Success",
     "language": "Language"
+  },
+  "krishimitra": {
+    "badge": "KrishiMitra — Your AI Farming Assistant",
+    "card_title": "Have questions about your crop, disease risk, or spray dosage?",
+    "card_subtitle": "Ask KrishiMitra in English, Hindi, or Marathi. Get instant guidance, symptom explanations, and direct access to CropShield diagnosis & risk tools.",
+    "ask_button": "Ask KrishiMitra",
+    "header_tagline": "CropShield AI Farming Companion"
   }
 }

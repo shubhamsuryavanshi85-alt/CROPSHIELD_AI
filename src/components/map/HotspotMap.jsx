@@ -4,6 +4,24 @@ import L from 'leaflet';
 import Badge from '../ui/Badge';
 import { ShieldAlert, Send, Eye } from 'lucide-react';
 
+// Fix Leaflet default icon URLs in Vite/React bundling
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+const formatStr = (val, fallback = '') => {
+  if (val === null || val === undefined) return fallback;
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number') return String(val);
+  if (typeof val === 'object') {
+    return val.label || val.name || val.disease || val.title || val.diagnosis || fallback;
+  }
+  return fallback;
+};
+
 // Create custom colored DivIcons
 const createSeverityIcon = (severity, status) => {
   let color = '#5C9E31'; // green
@@ -34,13 +52,33 @@ const createSeverityIcon = (severity, status) => {
   });
 };
 
-// Component to handle pan to selected alert
+// Component to handle pan to selected alert and invalidate map size
 function MapPanController({ selectedCenter }) {
   const map = useMap();
   useEffect(() => {
-    if (selectedCenter) {
-      map.flyTo([selectedCenter.lat, selectedCenter.lon], 12, { duration: 1.2 });
+    const timer = setTimeout(() => {
+      try {
+        if (map) map.invalidateSize();
+      } catch (e) {
+        // ignore size invalidation error on unmount
+      }
+    }, 150);
+
+    if (
+      selectedCenter &&
+      typeof selectedCenter.lat === 'number' &&
+      typeof selectedCenter.lon === 'number' &&
+      !isNaN(selectedCenter.lat) &&
+      !isNaN(selectedCenter.lon)
+    ) {
+      try {
+        map.flyTo([selectedCenter.lat, selectedCenter.lon], 12, { duration: 1.2 });
+      } catch (e) {
+        console.warn('Map flyTo error:', e);
+      }
     }
+
+    return () => clearTimeout(timer);
   }, [selectedCenter, map]);
   return null;
 }
@@ -53,7 +91,16 @@ export default function HotspotMap({
   onOpenDispatch,
   showHeatmap = true,
 }) {
+  const safeFarms = Array.isArray(farms) ? farms : [];
+  const safeAlerts = Array.isArray(alerts) ? alerts : [];
   const defaultCenter = [19.5, 74.5]; // Maharashtra central belt
+
+  const targetFarm = selectedAlert ? safeFarms.find((f) => f && f.id === selectedAlert.farmId) : null;
+  const selectedCenter = targetFarm
+    ? { lat: targetFarm.lat || 20.0059, lon: targetFarm.lon || 73.7797 }
+    : selectedAlert
+    ? { lat: 20.0059, lon: 73.7797 }
+    : null;
 
   return (
     <div className="relative w-full h-[520px] sm:h-[600px] rounded-2xl overflow-hidden border border-soil-dark/15 shadow-xl">
@@ -68,20 +115,13 @@ export default function HotspotMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Pan controller */}
-        {selectedAlert && (
-          <MapPanController
-            selectedCenter={{
-              lat: farms.find((f) => f.id === selectedAlert.farmId)?.lat || 20.0059,
-              lon: farms.find((f) => f.id === selectedAlert.farmId)?.lon || 73.7797,
-            }}
-          />
-        )}
+        {/* Pan and resize controller */}
+        <MapPanController selectedCenter={selectedCenter} />
 
         {/* Heatmap / Density Circles */}
         {showHeatmap &&
-          farms
-            .filter((f) => f.risk === 'critical' || f.risk === 'high')
+          safeFarms
+            .filter((f) => f && (f.risk === 'critical' || f.risk === 'high') && f.lat && f.lon)
             .map((farm) => (
               <Circle
                 key={'circle_' + farm.id}
@@ -97,8 +137,10 @@ export default function HotspotMap({
             ))}
 
         {/* Farm Markers */}
-        {farms.map((farm) => {
-          const matchingAlert = alerts.find((a) => a.farmId === farm.id);
+        {safeFarms
+          .filter((farm) => farm && farm.lat && farm.lon)
+          .map((farm) => {
+            const matchingAlert = safeAlerts.find((a) => a && a.farmId === farm.id);
           const icon = createSeverityIcon(farm.risk, matchingAlert?.status);
 
           return (
@@ -131,16 +173,16 @@ export default function HotspotMap({
 
                   <div className="text-xs space-y-1">
                     <p>
-                      <strong>Crop:</strong> {farm.crop} ({farm.stage})
+                      <strong>Crop:</strong> {formatStr(farm.crop)} ({formatStr(farm.stage)})
                     </p>
                     <p>
-                      <strong>District:</strong> {farm.district}
+                      <strong>District:</strong> {formatStr(farm.district)}
                     </p>
                     <p className="text-danger-red font-semibold">
-                      <strong>Issue:</strong> {farm.activeIssue}
+                      <strong>Issue:</strong> {formatStr(farm.activeIssue)}
                     </p>
                     <p className="text-[11px] text-soil-dark/60 font-mono-data">
-                      Last Check: {farm.lastReport}
+                      Last Check: {formatStr(farm.lastReport)}
                     </p>
                   </div>
 

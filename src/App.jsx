@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import PageShell from './components/layout/PageShell';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 import Home from './pages/Home';
 import Diagnose from './pages/Diagnose';
 import Forecast from './pages/Forecast';
 import MapPage from './pages/Map';
 import Advisory from './pages/Advisory';
+import FarmerSupport from './pages/FarmerSupport';
 import Dashboard from './pages/Dashboard';
 
 export default function App() {
   // Sync state with URL hash for navigation & bookmarking
   const getInitialPage = () => {
     const hash = window.location.hash.replace('#/', '').replace('#', '');
-    const validPages = ['home', 'diagnose', 'forecast', 'map', 'advisory', 'dashboard'];
+    const validPages = ['home', 'diagnose', 'forecast', 'map', 'advisory', 'support', 'dashboard'];
     return validPages.includes(hash) ? hash : 'home';
   };
 
@@ -26,7 +28,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '').replace('#', '');
-      const validPages = ['home', 'diagnose', 'forecast', 'map', 'advisory', 'dashboard'];
+      const validPages = ['home', 'diagnose', 'forecast', 'map', 'advisory', 'support', 'dashboard'];
       if (validPages.includes(hash)) {
         setActivePage(hash);
       }
@@ -38,12 +40,15 @@ export default function App() {
 
   return (
     <PageShell activePage={activePage} onNavigate={handleNavigate}>
-      {activePage === 'home' && <Home onNavigate={handleNavigate} />}
-      {activePage === 'diagnose' && <Diagnose />}
-      {activePage === 'forecast' && <Forecast onNavigate={handleNavigate} />}
-      {activePage === 'map' && <MapPage />}
-      {activePage === 'advisory' && <Advisory />}
-      {activePage === 'dashboard' && <Dashboard />}
+      <ErrorBoundary key={activePage}>
+        {activePage === 'home' && <Home onNavigate={handleNavigate} />}
+        {activePage === 'diagnose' && <Diagnose />}
+        {activePage === 'forecast' && <Forecast onNavigate={handleNavigate} />}
+        {activePage === 'map' && <MapPage />}
+        {activePage === 'advisory' && <Advisory />}
+        {activePage === 'support' && <FarmerSupport onNavigate={handleNavigate} />}
+        {activePage === 'dashboard' && <Dashboard />}
+      </ErrorBoundary>
     </PageShell>
   );
 }

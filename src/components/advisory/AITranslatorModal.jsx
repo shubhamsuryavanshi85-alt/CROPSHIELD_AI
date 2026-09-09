@@ -22,6 +22,7 @@ export default function AITranslatorModal({ isOpen, onClose, advisory }) {
       const res = await generateAdvisoryTranslation({
         advisoryText: sourceText,
         targetLanguage: targetLang,
+        customPrompt,
       });
 
       setTranslatedText(res);

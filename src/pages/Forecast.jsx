@@ -5,7 +5,7 @@ import { useWeatherRisk } from '../hooks/useWeatherRisk';
 import FarmContextPanel from '../components/forecast/FarmContextPanel';
 import RiskTimeline from '../components/forecast/RiskTimeline';
 import DayRiskDetail from '../components/forecast/DayRiskDetail';
-import { CloudSun, RefreshCw, AlertTriangle, Sparkles, MapPin } from 'lucide-react';
+import { CloudSun, RefreshCw, AlertTriangle, Building2, ArrowRight } from 'lucide-react';
 
 export default function Forecast({ onNavigate }) {
   const { t } = useTranslation();
@@ -87,6 +87,27 @@ export default function Forecast({ onNavigate }) {
           />
         </div>
       )}
+
+      {/* Prepare for Crop Damage Link Banner */}
+      <div className="p-5 bg-parchment/60 rounded-2xl border border-soil-dark/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 font-bold text-xs text-soil-dark">
+            <Building2 className="w-4 h-4 text-field-green" />
+            <span>Prepare for Severe Weather or Crop Loss</span>
+          </div>
+          <p className="text-xs text-soil-dark/70">
+            If weather risk triggers severe crop loss, check PMFBY insurance reporting rules and MP RBC 6-4 state relief.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => onNavigate('support')}
+          className="px-4 py-2.5 bg-field-green hover:bg-field-dark text-white rounded-xl font-bold text-xs shadow-sm transition-colors flex items-center gap-1.5 shrink-0"
+        >
+          <span>Check Farmer Support</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 }

@@ -58,7 +58,10 @@ export default function TopThreatsChart() {
                 fontSize: '11px',
                 border: 'none',
               }}
-              formatter={(value, name, item) => [`${value} Farms affected`, item.payload.crop]}
+              formatter={(value, name, item) => [
+                `${value} Farms affected`,
+                item?.payload?.crop || 'Crop',
+              ]}
             />
             <Bar dataKey="farms" radius={[0, 4, 4, 0]}>
               {threatsData.map((entry, index) => (

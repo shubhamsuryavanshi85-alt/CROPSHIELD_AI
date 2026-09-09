@@ -6,6 +6,7 @@ import DiseaseTrendChart from '../components/dashboard/DiseaseTrendChart';
 import ResponseHeatmap from '../components/dashboard/ResponseHeatmap';
 import TopThreatsChart from '../components/dashboard/TopThreatsChart';
 import InterventionTable from '../components/dashboard/InterventionTable';
+import ExpertValidationCenter from '../components/dashboard/ExpertValidationCenter';
 import { LayoutDashboard } from 'lucide-react';
 
 export default function Dashboard() {
@@ -32,6 +33,15 @@ export default function Dashboard() {
 
       {/* KPI Summary Strip */}
       <KPIStrip />
+
+      {/* Expert Validation Center */}
+      <div className="space-y-3">
+        <div>
+          <h2 className="font-display font-bold text-xl text-soil-dark">Expert Validation Center</h2>
+          <p className="text-xs text-soil-dark/70">Review and validate field diagnoses to maintain intelligence accuracy.</p>
+        </div>
+        <ExpertValidationCenter />
+      </div>
 
       {/* Charts Grid (2x2 on Desktop) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

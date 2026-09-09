@@ -1,20 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../ui/Modal';
 import { useSettingsStore } from '../../store/settingsStore';
+import { aiService } from '../../services/ai/aiService';
 import { showToast } from '../../hooks/useToast';
-import { Key, Volume2, Database, ShieldCheck, CheckCircle, RefreshCw } from 'lucide-react';
+import { Cpu, Volume2, Database, ShieldCheck, RefreshCw } from 'lucide-react';
 
 export default function SettingsModal({ isOpen, onClose }) {
-  const { apiKey, setApiKey, speechEnabled, setSpeechEnabled } = useSettingsStore();
-  const [inputKey, setInputKey] = useState(apiKey);
-  const [saved, setSaved] = useState(false);
+  const { speechEnabled, setSpeechEnabled } = useSettingsStore();
+  const [healthInfo, setHealthInfo] = useState(null);
+  const [checkingHealth, setCheckingHealth] = useState(false);
 
-  const handleSaveKey = (e) => {
-    e.preventDefault();
-    setApiKey(inputKey);
-    setSaved(true);
-    showToast('Settings Saved', 'API configuration updated successfully.', 'success');
-    setTimeout(() => setSaved(false), 2500);
+  useEffect(() => {
+    if (isOpen) {
+      checkHealthStatus();
+    }
+  }, [isOpen]);
+
+  const checkHealthStatus = async () => {
+    setCheckingHealth(true);
+    try {
+      const res = await aiService.checkHealth();
+      setHealthInfo(res);
+    } catch {
+      setHealthInfo({ status: 'offline', provider: 'deepseek', model: 'deepseek-chat' });
+    } finally {
+      setCheckingHealth(false);
+    }
   };
 
   const handleResetData = () => {
@@ -33,50 +44,56 @@ export default function SettingsModal({ isOpen, onClose }) {
       isOpen={isOpen}
       onClose={onClose}
       title="Application & Intelligence Settings"
-      subtitle="Configure Anthropic Claude API, audio preferences, and field database"
+      subtitle="Multi-provider AI reasoning (DeepSeek / Hugging Face) & voice assistant controls"
       maxWidth="max-w-lg"
     >
       <div className="space-y-6">
-        {/* Claude API Key Configuration */}
+        {/* Multi-Provider AI Engine Status */}
         <div className="bg-parchment/70 p-4 rounded-xl border border-soil-dark/10 space-y-3">
-          <div className="flex items-center gap-2">
-            <Key className="w-4 h-4 text-field-green" />
-            <h4 className="text-xs font-bold uppercase tracking-wider text-soil-dark">
-              Anthropic Claude Vision API Key
-            </h4>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-field-green" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-soil-dark">
+                KrishiMitra Conversational AI Engine
+              </h4>
+            </div>
+
+            <button
+              onClick={checkHealthStatus}
+              disabled={checkingHealth}
+              className="text-[11px] font-semibold text-field-green hover:underline flex items-center gap-1"
+            >
+              <RefreshCw className={`w-3 h-3 ${checkingHealth ? 'animate-spin' : ''}`} />
+              <span>Verify Status</span>
+            </button>
           </div>
 
           <p className="text-xs text-soil-dark/70 leading-relaxed">
-            CropShield AI uses Claude 3.5 Sonnet for vision pathology and vernacular translations. 
-            An intelligent offline agricultural pathology engine is active as an automatic fallback when no API key is provided.
+            CropShield AI routes conversational queries through server-side DeepSeek API / Hugging Face router. API secrets remain strictly protected on the backend server.
           </p>
 
-          <form onSubmit={handleSaveKey} className="space-y-2.5">
-            <div className="relative">
-              <input
-                type="password"
-                value={inputKey}
-                onChange={(e) => setInputKey(e.target.value)}
-                placeholder="sk-ant-api03-..."
-                className="w-full text-xs font-mono-data px-3 py-2 bg-white border border-soil-dark/20 rounded-lg focus:outline-none focus:border-field-green text-soil-dark"
-              />
+          <div className="p-3 bg-white rounded-lg border border-soil-dark/15 text-xs space-y-1 font-mono-data">
+            <div className="flex justify-between">
+              <span className="text-soil-dark/60">Active Provider:</span>
+              <span className="font-bold text-soil-dark">{healthInfo?.provider || 'deepseek'}</span>
             </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] text-growth font-medium flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                {apiKey ? 'Claude Vision API Active' : 'Offline Pathology Engine Active'}
-              </span>
-
-              <button
-                type="submit"
-                className="px-3.5 py-1.5 bg-field-green text-white text-xs font-semibold rounded-lg hover:bg-field-dark transition-colors flex items-center gap-1.5 shadow-sm"
+            <div className="flex justify-between">
+              <span className="text-soil-dark/60">Active Model:</span>
+              <span className="font-bold text-soil-dark">{healthInfo?.model || 'deepseek-chat'}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-soil-dark/60">Connection Status:</span>
+              <span
+                className={`font-bold px-2 py-0.5 rounded text-[10px] ${
+                  healthInfo?.status === 'connected'
+                    ? 'bg-growth/20 text-growth'
+                    : 'bg-harvest-gold/20 text-soil-dark'
+                }`}
               >
-                {saved ? <CheckCircle className="w-3.5 h-3.5" /> : null}
-                <span>{saved ? 'Saved' : 'Save Key'}</span>
-              </button>
+                {healthInfo?.status === 'connected' ? 'CONNECTED (ONLINE)' : 'OFFLINE FALLBACK ACTIVE'}
+              </span>
             </div>
-          </form>
+          </div>
         </div>
 
         {/* Audio / Voice Guidance Toggle */}

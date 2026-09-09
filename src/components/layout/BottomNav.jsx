@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sprout, ShieldAlert, MapPin, CloudSun, BookOpen } from 'lucide-react';
+import { Sprout, ShieldAlert, MapPin, CloudSun, BookOpen, Building2, LayoutDashboard } from 'lucide-react';
 
 export default function BottomNav({ activePage, onNavigate }) {
   const { t } = useTranslation();
@@ -8,9 +8,10 @@ export default function BottomNav({ activePage, onNavigate }) {
   const tabs = [
     { id: 'home', label: t('nav.home', 'Home'), icon: Sprout },
     { id: 'diagnose', label: t('nav.diagnose', 'Diagnose'), icon: ShieldAlert, highlight: true },
+    { id: 'support', label: t('nav.support', 'Support'), icon: Building2 },
     { id: 'forecast', label: t('nav.forecast', 'Forecast'), icon: CloudSun },
     { id: 'map', label: t('nav.map', 'Map'), icon: MapPin },
-    { id: 'advisory', label: t('nav.advisory', 'Advisories'), icon: BookOpen },
+    { id: 'advisory', label: t('nav.advisory', 'Advisory'), icon: BookOpen },
   ];
 
   return (

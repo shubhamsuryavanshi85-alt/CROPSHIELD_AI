@@ -19,6 +19,7 @@ export function useImageAnalysis() {
       recentRain,
       apiKey,
       sampleData = null,
+      language = 'en',
     }) => {
       setAnalyzing(true);
       setError(null);
@@ -26,21 +27,17 @@ export function useImageAnalysis() {
       try {
         let diagnosisData;
 
-        if (sampleData) {
-          // Instant sample match with slight realism delay
-          await new Promise((r) => setTimeout(r, 600));
-          diagnosisData = sampleData.diagnosis;
-        } else {
-          diagnosisData = await diagnoseCrop({
-            imageBase64,
-            cropType,
-            growthStage,
-            symptoms,
-            location,
-            recentRain,
-            apiKey,
-          });
-        }
+        diagnosisData = await diagnoseCrop({
+          imageBase64,
+          cropType,
+          growthStage,
+          symptoms,
+          location,
+          recentRain,
+          apiKey,
+          language,
+          sampleId: sampleData?.id,
+        });
 
         setResult(diagnosisData);
 

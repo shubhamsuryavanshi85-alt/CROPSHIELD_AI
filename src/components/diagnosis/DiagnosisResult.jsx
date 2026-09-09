@@ -17,6 +17,7 @@ import {
   Info,
   ShieldCheck,
   Send,
+  ArrowRight,
 } from 'lucide-react';
 
 export default function DiagnosisResult({ result, cropType, location }) {
@@ -42,6 +43,8 @@ export default function DiagnosisResult({ result, cropType, location }) {
     refer_to_lab = false,
     refer_reason,
     follow_up_days = 3,
+    alternative_diagnoses = [],
+    symptoms_detected = [],
   } = result;
 
   // Severity border styling
@@ -65,6 +68,16 @@ export default function DiagnosisResult({ result, cropType, location }) {
   };
 
   // Text to Speech
+  const getSpeechLang = (code) => {
+    switch (code) {
+      case 'hi': return 'hi-IN';
+      case 'mr': return 'mr-IN'; // Marathi is often supported as mr-IN
+      case 'te': return 'te-IN';
+      case 'ta': return 'ta-IN';
+      default: return 'en-IN';
+    }
+  };
+
   const toggleSpeech = () => {
     if (!window.speechSynthesis) {
       showToast('Speech Error', 'Text-to-speech is not supported on this browser.', 'warning');
@@ -75,8 +88,9 @@ export default function DiagnosisResult({ result, cropType, location }) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
     } else {
-      const speechText = `Diagnosis: ${diagnosis}. Severity: ${severity}. ${description}. Immediate action: ${immediate_actions[0] || ''}.`;
+      const speechText = `${diagnosis}. ${description}. ${immediate_actions[0] || ''}`;
       const utterance = new SpeechSynthesisUtterance(speechText);
+      utterance.lang = getSpeechLang(result.advisory_language_key || 'en');
       utterance.rate = 0.95;
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
@@ -157,7 +171,36 @@ export default function DiagnosisResult({ result, cropType, location }) {
         <p className="text-xs sm:text-sm text-soil-dark/85 leading-relaxed bg-white p-3 rounded-lg border border-soil-dark/10">
           {description}
         </p>
+
+        {/* Symptoms Detected Highlights */}
+        {symptoms_detected && symptoms_detected.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {symptoms_detected.map((sym, idx) => (
+              <span key={idx} className="px-2 py-1 bg-soil-dark/5 text-soil-dark text-[10px] rounded-md font-medium border border-soil-dark/10">
+                🔍 {sym}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Alternative Possibilities */}
+      {alternative_diagnoses && alternative_diagnoses.length > 0 && (
+        <div className="space-y-1.5 pt-1">
+           <h3 className="text-xs font-bold uppercase tracking-wider text-soil-dark/70 flex items-center gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-warning-amber" />
+            Alternative AI Possibilities
+          </h3>
+          <div className="bg-parchment/30 p-2.5 rounded-lg border border-soil-dark/10 space-y-1">
+             {alternative_diagnoses.map((alt, idx) => (
+               <div key={idx} className="flex items-center justify-between text-[11px] text-soil-dark/80">
+                 <span>{alt.name}</span>
+                 <span className="font-mono-data font-semibold">{alt.probability}% match</span>
+               </div>
+             ))}
+          </div>
+        </div>
+      )}
 
       {/* Immediate Field Actions */}
       {immediate_actions.length > 0 && (
@@ -296,6 +339,25 @@ export default function DiagnosisResult({ result, cropType, location }) {
         >
           <FlaskConical className="w-4 h-4 text-sky-blue" />
           <span>Request Lab Confirmation</span>
+        </button>
+      </div>
+
+      {/* Crop Damage Government Assistance Banner */}
+      <div className="p-3.5 bg-danger-red/10 border border-danger-red/30 rounded-xl space-y-2 text-xs text-soil-dark">
+        <div className="flex items-center gap-1.5 font-bold text-danger-red">
+          <Building2 className="w-4 h-4" />
+          <span>Need Crop-Loss Assistance?</span>
+        </div>
+        <p className="text-[11px] text-soil-dark/80 leading-relaxed">
+          If your crop has suffered significant disease or weather damage, check if PMFBY crop insurance or state revenue relief applies.
+        </p>
+        <button
+          type="button"
+          onClick={() => { window.location.hash = '#/support'; }}
+          className="w-full py-2 bg-danger-red hover:bg-danger-dark text-white rounded-lg font-bold text-xs shadow-sm transition-colors flex items-center justify-center gap-1"
+        >
+          <span>Check Farmer Support Assistance</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
